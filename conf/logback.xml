@@ -20,10 +20,10 @@
 	<logger name="io.netty" level="ERROR" />
 	<logger name="io.netty.handler" level="ERROR" />
 	 
-	<logger name="io.sinistral.proteus.server.swagger" level="DEBUG" />
-	<logger name="io.sinistral.proteus.server.handlers" level="DEBUG" />
-	<logger name="io.sinistral.proteus.services" level="DEBUG" />
-	<logger name="io.sinistral.proteus.modules" level="DEBUG" />
+	<logger name="io.sinistral.proteus.server.swagger" level="ERROR" />
+	<logger name="io.sinistral.proteus.server.handlers" level="ERROR" />
+	<logger name="io.sinistral.proteus.services" level="ERROR" />
+	<logger name="io.sinistral.proteus.modules" level="ERROR" />
 	
 	io.sinistral.proteus.services
 	<logger name="com.relayrides" level="ERROR" />
@@ -108,7 +108,7 @@
 	<logger name="com.google.inject" level="ERROR" />  
       	<logger name="com.datastax" level="ERROR" />
      
-  <root level="DEBUG">
+  <root level="OFF">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>

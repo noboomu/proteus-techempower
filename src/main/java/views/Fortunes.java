@@ -20,7 +20,7 @@ public class Fortunes extends com.fizzed.rocker.runtime.DefaultRockerModel {
 
     static public final com.fizzed.rocker.ContentType CONTENT_TYPE = com.fizzed.rocker.ContentType.HTML;
     static public final String TEMPLATE_NAME = "Fortunes.rocker.html";
-    static public final String TEMPLATE_PACKAGE_NAME = "main.java.views";
+    static public final String TEMPLATE_PACKAGE_NAME = "views";
     static public final String HEADER_HASH = "331039920";
     static public final long MODIFIED_AT = 1493423796000L;
     static public final String[] ARGUMENT_NAMES = { "items" };
@@ -127,11 +127,11 @@ public class Fortunes extends com.fizzed.rocker.runtime.DefaultRockerModel {
 
     private static class PlainText {
 
-        static private final String PLAIN_TEXT_0_0 = "<!DOCTYPE html>\n<html>\n<head><title>Fortunes</title></head>\n<body><table>\n<tr><th>id</th><th>message</th></tr>\n";
-        static private final String PLAIN_TEXT_1_0 = "\t<tr><td>";
+        static private final String PLAIN_TEXT_0_0 = "<!DOCTYPE html><html><head><title>Fortunes</title></head><body><table><tr><th>id</th><th>message</th></tr>";
+        static private final String PLAIN_TEXT_1_0 = "<tr><td>";
         static private final String PLAIN_TEXT_2_0 = "</td><td>";
-        static private final String PLAIN_TEXT_3_0 = "</td></tr>\n";
-        static private final String PLAIN_TEXT_4_0 = "</table></body>\n</html>";
+        static private final String PLAIN_TEXT_3_0 = "</td></tr>";
+        static private final String PLAIN_TEXT_4_0 = "</table></body></html>";
 
     }
 

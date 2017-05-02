@@ -2,7 +2,8 @@
 
 fw_depends postgresql mysql java maven
 
-sed -i 's|localhost|'"${DBHOST}"'|g' conf/application.conf
+sed -i 's|mysql://.*:3306|mysql://'"${DBHOST}"':3306|g' conf/application.conf
+sed -i 's|postgresql://.*:3306|postgresql://'"${DBHOST}"':3306|g' conf/application.conf
 
 mvn clean package
 cd target
