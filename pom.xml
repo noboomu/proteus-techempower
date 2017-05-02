@@ -219,7 +219,6 @@
 			<groupId>io.sinistral</groupId>
 			<artifactId>proteus-core</artifactId>
 			<version>0.1.2-SNAPSHOT</version>
-			<scope>runtime</scope>
 			
 		</dependency>
 		<dependency>
