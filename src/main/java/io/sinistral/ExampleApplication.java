@@ -26,7 +26,6 @@ public class ExampleApplication extends ProteusApplication
 
 		app.addService(PostgresService.class);
  
-		 
 		app.addController(Benchmarks.class);  
 
 		app.start();
