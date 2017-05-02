@@ -108,7 +108,7 @@
 	<logger name="com.google.inject" level="ERROR" />  
       	<logger name="com.datastax" level="ERROR" />
      
-  <root level="DEBUG">
+  <root level="OFF">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>
