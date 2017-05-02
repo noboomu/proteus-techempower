@@ -32,20 +32,6 @@ public class ExampleApplication extends ProteusApplication
  
 		app.addController(Benchmarks.class);  
 		
-		System.out.println(app.config.getString("application.tmpdir"));
-
-		System.out.println(System.getProperty("java.io.tmpdir"));
-		
-		try
-		{
-			Path tmpFile = Files.createTempDirectory(app.config.getString("application.name"));
-			
-			System.out.println(tmpFile);
-			
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
 		app.start();
         
     }
