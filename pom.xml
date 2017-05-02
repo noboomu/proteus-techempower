@@ -218,7 +218,7 @@
 		<dependency>
 			<groupId>io.sinistral</groupId>
 			<artifactId>proteus-core</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>0.1.1</version>
 			<scope>runtime</scope>
 			
 		</dependency>
@@ -240,7 +240,7 @@
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okcurl</artifactId>
-			<version>[3.6.0,4.0.0)</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.retrofit2</groupId>

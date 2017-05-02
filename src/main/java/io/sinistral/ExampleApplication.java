@@ -1,5 +1,9 @@
 package io.sinistral;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import io.sinistral.controllers.Benchmarks;
 import io.sinistral.proteus.ProteusApplication;
 import io.sinistral.proteus.services.AssetsService;
@@ -27,7 +31,21 @@ public class ExampleApplication extends ProteusApplication
 		app.addService(PostgresService.class);
  
 		app.addController(Benchmarks.class);  
+		
+		System.out.println(app.config.getString("application.tmpdir"));
 
+		System.out.println(System.getProperty("java.io.tmpdir"));
+		
+		try
+		{
+			Path tmpFile = Files.createTempDirectory(app.config.getString("application.name"));
+			
+			System.out.println(tmpFile);
+			
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		app.start();
         
     }
