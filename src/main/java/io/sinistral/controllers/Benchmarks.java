@@ -5,14 +5,11 @@ package io.sinistral.controllers;
 
 import static io.sinistral.proteus.server.ServerResponse.response;
 
-import java.io.StringWriter;
-import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,24 +19,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.fizzed.rocker.runtime.ArrayOfByteArraysOutput;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.jsoniter.output.JsonStream;
-import com.mitchellbosecke.pebble.PebbleEngine;
-import com.mitchellbosecke.pebble.template.PebbleTemplate;
 
 import io.sinistral.models.Fortune;
 import io.sinistral.models.World;
-import io.sinistral.proteus.server.ServerResponse;
-import io.sinistral.services.PostgresService;
 import io.sinistral.services.MySqlService;
+import io.sinistral.services.PostgresService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.Headers;
 
 /**
  * Much of this borrowed with reverence from Light-Java
@@ -57,7 +49,8 @@ public class Benchmarks
 {
 	private static final String HTML_UTF8_TYPE = io.sinistral.proteus.server.MediaType.TEXT_HTML_UTF8.toString();
 	private static final String PLAINTEXT_UTF8_TYPE = io.sinistral.proteus.server.MediaType.TEXT_PLAIN_UTF8.toString();
-
+	private static final String PLAINTEXT_TYPE = io.sinistral.proteus.server.MediaType.TEXT_PLAIN.toString();
+	
 	@Inject 
 	protected MySqlService sqlService;
 	
@@ -199,7 +192,7 @@ public class Benchmarks
 	@ApiOperation(value = "Plaintext endpoint",   httpMethod = "GET" )
 	public void plaintext(HttpServerExchange exchange)
 	{ 
-		response("Hello, World!").contentType(PLAINTEXT_UTF8_TYPE).send(exchange);
+		response("Hello, World!").contentType(PLAINTEXT_TYPE).send(exchange);
 
 	}
 	
