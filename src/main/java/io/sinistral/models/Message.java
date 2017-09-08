@@ -9,14 +9,11 @@ package io.sinistral.models;
  */
 public final class Message
 {
-	public final String key;
-	public final String value;
+	public final String message; 
  
-	public Message(String key, String value)
-	{
-		 
-		this.key = key;
-		this.value = value;
+	public Message(String message)
+	{ 
+		this.message = message; 
 	}
 	
 	
