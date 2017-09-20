@@ -3,7 +3,7 @@
  */
 package io.sinistral.controllers;
 
-import static io.sinistral.proteus.server.ServerResponse.response;
+import static io.undertow.util.Headers.CONTENT_TYPE;
 
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
@@ -26,20 +26,22 @@ import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.jsoniter.DecodingMode;
+import com.jsoniter.JsonIterator;
+import com.jsoniter.output.EncodingMode;
 import com.jsoniter.output.JsonStream;
 
 import io.sinistral.models.Fortune;
 import io.sinistral.models.Message;
+import io.sinistral.models.MessageEncoder;
 import io.sinistral.models.World;
 import io.sinistral.proteus.annotations.Blocking;
 import io.sinistral.services.MySqlService;
 import io.sinistral.services.PostgresService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
-import static io.undertow.util.Headers.CONTENT_TYPE;
 
 /**
  * Much of this borrowed with reverence from Light-Java
@@ -72,6 +74,12 @@ public class Benchmarks
     	 throw new RuntimeException(e);
      	}
     	MESSAGE_BUFFER.flip();
+    	
+    	JsonStream.setMode(EncodingMode.STATIC_MODE);
+    	
+    	MessageEncoder encoder = new MessageEncoder();
+    	
+    	JsonStream.registerNativeEncoder(Message.class, encoder);
     }
     
     
@@ -292,7 +300,19 @@ public class Benchmarks
 		    exchange.getResponseSender().send(MESSAGE_BUFFER.duplicate());
 	}
 	
-	
+
+	@GET
+	@Path("/json2")
+	@ApiOperation(value = "Json serialization endpoint",   httpMethod = "GET" )
+	public void json2(HttpServerExchange exchange)
+	{ 
+		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
+		 
+		 ByteBuffer json = ByteBuffer.wrap("{\r\n\"message\": \"Hello, World!\"\r\n}".getBytes()); 
+		 
+		 exchange.getResponseSender().send( json  );
+		
+	}
 	
 	@GET
 	@Path("/json")
@@ -301,7 +321,9 @@ public class Benchmarks
 	{ 
 		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
 		 
-		 ByteBuffer json = JsonStream.serializeToBytes( new Message("Hello, World!")  ); 
+		 Message msg = new Message("Hello, World!");
+		 
+		 ByteBuffer json = JsonStream.serializeToBytes( msg ); 
 		 
 		 exchange.getResponseSender().send( json  );
 		

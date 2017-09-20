@@ -152,6 +152,7 @@
 
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -179,6 +180,48 @@
 							<mainClass>io.sinistral.ExampleApplication</mainClass>
 						</manifest>
 					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+					<!-- 	<id>static-codegen</id>
+						<phase>compile</phase> -->
+						<goals>
+							<goal>exec</goal>
+						</goals>
+			<!-- 			<configuration>
+					    <executable>java</executable>
+					    <workingDirectory>${project.build.sourceDirectory}</workingDirectory>
+					    <arguments>
+						<argument>-classpath</argument>
+						<classpath/>
+						<argument>com.jsoniter.static_codegen.StaticCodegen</argument>
+						<argument>io.sinistral.models.CodegenConfig</argument>
+					    </arguments>
+					</configuration> -->
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-Dlogback.configurationFile=${project.build.directory}/conf/logback.xml</argument>
+						<argument>-Xms1g</argument>
+						<argument>-Xmx2g</argument>
+						<argument>-XX:+AggressiveOpts</argument>
+						<argument>-XX:-UseBiasedLocking</argument>
+						<argument>-XX:+UseStringDeduplication</argument>
+						<argument>-classpath</argument>
+						<!-- automatically creates the classpath using all project dependencies, 
+							also adding the project build directory -->
+						<classpath />
+						<argument>io.sinistral.ExampleApplication</argument>
+
+					</arguments>
+
 				</configuration>
 			</plugin>
 		  <!-- 	<plugin>
