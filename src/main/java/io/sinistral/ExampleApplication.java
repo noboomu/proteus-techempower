@@ -113,6 +113,7 @@ public class ExampleApplication extends ProteusApplication
 					.setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false)
 					.setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, false) 
 					.setWorkerThreads(200)
+					.setHandler(rootHandler2)
 					 .build()
 			            .start();
     }
