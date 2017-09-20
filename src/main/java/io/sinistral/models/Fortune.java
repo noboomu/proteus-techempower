@@ -9,7 +9,7 @@ import java.util.Random;
  * @author jbauer
  *
  */
-public class Fortune implements Comparable<Fortune> {
+public final class Fortune implements Comparable<Fortune> {
 
 	public static final String[] TMP_MESSAGES = new String[]{
 			"A bad random number generator: 1, 1, 1, 1, 1, 4.33e+67, 1, 1, 1",

@@ -250,7 +250,7 @@ public class Benchmarks
 	      
 			try (final Connection connection = postgresService.getConnection())
 			{
-				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY))
+				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
 				{
 	
 					try (ResultSet resultSet = statement.executeQuery())
@@ -268,18 +268,17 @@ public class Benchmarks
 			
 	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
 	        
-	        fortunes.sort(null);
+	        Collections.sort(fortunes);
 	        
  	        StringWriter writer = new StringWriter();
  	      
  	        Mustache mustache = mustacheFactory.compile("templates/Fortunes.mustache");
 
-	        mustache.execute(writer, fortunes);
-	        String html = writer.toString();
+	        mustache.execute(writer, fortunes); 
 	        	         
 	        exchange.getResponseHeaders().put(
 	                Headers.CONTENT_TYPE, "text/html");
-	        exchange.getResponseSender().send(html);  
+	        exchange.getResponseSender().send(writer.toString());  
 	}
  
 	
@@ -302,11 +301,9 @@ public class Benchmarks
 	{ 
 		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
 		 
-		 ByteBuffer json = JsonStream.serializeToBytes( Collections.singletonMap("message", "Hello, World!") ); 
+		 ByteBuffer json = JsonStream.serializeToBytes( new Message("Hello, World!")  ); 
 		 
 		 exchange.getResponseSender().send( json  );
-		    
-		//response( JsonStream.serializeToBytes( new Message("Hello, World!") ) ).applicationJson().send(exchange);
 		
 	}
 }
