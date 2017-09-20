@@ -320,10 +320,8 @@ public class Benchmarks
 	public void json(HttpServerExchange exchange)
 	{ 
 		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
-		 
-		 Message msg = new Message("Hello, World!");
-		 
-		 ByteBuffer json = JsonStream.serializeToBytes( msg ); 
+		   
+		 ByteBuffer json = JsonStream.serializeToBytes( new Message("Hello, World!") ); 
 		 
 		 exchange.getResponseSender().send( json  );
 		
