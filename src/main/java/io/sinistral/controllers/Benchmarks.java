@@ -26,8 +26,6 @@ import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.jsoniter.DecodingMode;
-import com.jsoniter.JsonIterator;
 import com.jsoniter.output.EncodingMode;
 import com.jsoniter.output.JsonStream;
 
@@ -35,6 +33,7 @@ import io.sinistral.models.Fortune;
 import io.sinistral.models.Message;
 import io.sinistral.models.MessageEncoder;
 import io.sinistral.models.World;
+import io.sinistral.models.WorldEncoder;
 import io.sinistral.proteus.annotations.Blocking;
 import io.sinistral.services.MySqlService;
 import io.sinistral.services.PostgresService;
@@ -76,10 +75,11 @@ public class Benchmarks
     	MESSAGE_BUFFER.flip();
     	
     	JsonStream.setMode(EncodingMode.STATIC_MODE);
+    	 
     	
-    	MessageEncoder encoder = new MessageEncoder();
-    	
-    	JsonStream.registerNativeEncoder(Message.class, encoder);
+    	JsonStream.registerNativeEncoder(Message.class, new MessageEncoder());
+    	JsonStream.registerNativeEncoder(World.class, new WorldEncoder());
+
     }
     
     

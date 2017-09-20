@@ -29,7 +29,7 @@ public class ModelCodegenConfig implements CodegenConfig {
                 new TypeLiteral<Map<String, Object>>() {
                 },
                 // array
-                TypeLiteral.create(int[].class),
+                TypeLiteral.create(World.class),
                 // object
                 TypeLiteral.create(Message.class)
         };
