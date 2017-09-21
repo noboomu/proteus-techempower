@@ -5,6 +5,7 @@ package io.sinistral.controllers;
 
 import static io.undertow.util.Headers.CONTENT_TYPE;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.sql.Connection;
@@ -292,13 +293,35 @@ public class Benchmarks
 	
 	@GET
 	@Path("/plaintext")
-	@Produces((MediaType.TEXT_PLAIN)) 
 	@ApiOperation(value = "Plaintext endpoint",   httpMethod = "GET" )
 	public void plaintext(HttpServerExchange exchange)
 	{ 
 		   exchange.getResponseHeaders().put(CONTENT_TYPE, "text/plain");
 		    exchange.getResponseSender().send(MESSAGE_BUFFER.duplicate());
 	}
+	
+	@GET
+	@Path("/json3")
+	@ApiOperation(value = "Json serialization endpoint",   httpMethod = "GET" )
+	public void json3(HttpServerExchange exchange)
+	{ 
+		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
+		 
+		 ByteArrayOutputStream os = new  ByteArrayOutputStream(128);
+		 
+		 try
+		 {
+			 MessageEncoder.encodeRaw(  new Message("Hello, World!"), os);
+		 }
+		 catch(Exception e)
+		 {
+			 e.printStackTrace();
+		 }
+		 
+		 exchange.getResponseSender().send( ByteBuffer.wrap(os.toByteArray())  );
+		
+	}
+
 	
 
 	@GET

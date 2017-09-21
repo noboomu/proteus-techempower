@@ -31,4 +31,24 @@ public class MessageEncoder extends com.jsoniter.spi.EmptyEncoder
 			stream.writeString((java.lang.String) obj.message);
 		}
 	}
+	
+	public static void encodeRaw(io.sinistral.models.Message obj, java.io.OutputStream stream) throws java.io.IOException
+	{
+		boolean notFirst = false;
+		if (obj.message != null)
+		{
+			if (notFirst)
+			{
+				stream.write(com.jsoniter.output.JsonStream.COMMA);
+			}
+			else
+			{
+				notFirst = true;
+			}
+			stream.write(com.jsoniter.output.JsonStream.OBJECT_START);
+			stream.write("\"message\":".getBytes());
+			stream.write(obj.message.getBytes());
+			stream.write(com.jsoniter.output.JsonStream.OBJECT_END);
+		}
+	}
 }
