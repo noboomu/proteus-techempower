@@ -107,13 +107,13 @@ public class ExampleApplication extends ProteusApplication
 		            // In HTTP/1.1, connections are persistent unless declared
 		            // otherwise.  Adding a "Connection: keep-alive" header to every
 		            // response would only add useless bytes. 
-					.setServerOption(UndertowOptions.MAX_QUEUED_READ_BUFFERS, 5) 
+					.setServerOption(UndertowOptions.MAX_QUEUED_READ_BUFFERS, 250) 
 		            .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false)
 		            .setHandler(rootHandler2)
 		            .build()
 		            .start();
 		    
-		    HttpHandler rootHandler3 =  Handlers.header(pathHandler, Headers.SERVER_STRING, "F");
+		    HttpHandler rootHandler3 = Handlers.header(pathHandler, Headers.SERVER_STRING, "K");
 		    Undertow.builder()
 		            .addHttpListener(8096, "0.0.0.0")
 		            .setBufferSize(16 * 1024)
@@ -125,6 +125,21 @@ public class ExampleApplication extends ProteusApplication
 					.setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, false) 
 					.setWorkerThreads(200)
 					.setHandler(rootHandler3)
+					 .build()
+			            .start();
+		    
+		    HttpHandler rootHandler4 = new SetHeaderHandler(pathHandler,  Headers.SERVER_STRING, "U-tow");
+		    Undertow.builder()
+		            .addHttpListener(8097, "0.0.0.0")
+		            .setBufferSize(16 * 1024)
+					.setIoThreads(Runtime.getRuntime().availableProcessors() * 2)
+					.setServerOption(UndertowOptions.ENABLE_HTTP2, true)
+					.setServerOption(UndertowOptions.ALWAYS_SET_DATE, true)
+					.setSocketOption(org.xnio.Options.BACKLOG, 10000)
+					.setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false)
+					.setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, false) 
+					.setWorkerThreads(200)
+					.setHandler(rootHandler4)
 					 .build()
 			            .start();
     }
