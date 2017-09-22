@@ -75,7 +75,7 @@ public class Fortunes extends com.fizzed.rocker.runtime.DefaultRockerModel {
 
         public Template(Fortunes model) {
             super(model);
-            //__internal.setCharset("UTF-8");
+            __internal.setCharset("UTF-8");
             __internal.setContentType(CONTENT_TYPE);
             __internal.setTemplateName(TEMPLATE_NAME);
             __internal.setTemplatePackageName(TEMPLATE_PACKAGE_NAME);

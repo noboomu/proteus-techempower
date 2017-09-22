@@ -4,6 +4,7 @@
 package io.sinistral.controllers;
 
 import static io.undertow.util.Headers.CONTENT_TYPE;
+import com.fizzed.rocker.runtime.StringBuilderOutput;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
@@ -247,6 +248,44 @@ public class Benchmarks
 	        fortunes.sort(null);
 	        
 	        final String render = views.Fortunes.template(fortunes).render().toString(); 
+	         
+	        exchange.getResponseHeaders().put(
+	                Headers.CONTENT_TYPE, "text/html");
+	        exchange.getResponseSender().send(render);  
+	}
+	
+	@GET
+	@Path("/fortunes/postgres2")
+	@Blocking
+	@Produces(MediaType.TEXT_HTML)
+	@ApiOperation(value = "Fortunes postgres endpoint",   httpMethod = "GET"  )
+	public void fortunesPostgres2(HttpServerExchange exchange) throws Exception
+	{ 
+			List<Fortune> fortunes = new ArrayList<>();
+		  
+			try (final Connection connection = postgresService.getConnection())
+			{
+				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
+				{
+	
+					try (ResultSet resultSet = statement.executeQuery())
+					{
+						while (resultSet.next())
+						{
+							int id = resultSet.getInt("id");
+							String msg = resultSet.getString("message");
+	
+							fortunes.add(new Fortune(id, msg));
+						}
+					}
+				}
+			}
+			
+	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
+	        
+	        fortunes.sort(null);
+	        
+	        final String render = views.Fortunes.template(fortunes).render(StringBuilderOutput.FACTORY).toString(); 
 	         
 	        exchange.getResponseHeaders().put(
 	                Headers.CONTENT_TYPE, "text/html");
