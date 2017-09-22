@@ -4,6 +4,11 @@
 package io.sinistral.controllers;
 
 import static io.undertow.util.Headers.CONTENT_TYPE;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fizzed.rocker.runtime.StringBuilderOutput;
 
 import java.io.ByteArrayOutputStream;
@@ -63,6 +68,9 @@ public class Benchmarks
 	private static final ByteBuffer MESSAGE_BUFFER;
     private static final String MESSAGE = "Hello, World!";
     
+	private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
+ 
+    
     private static final MustacheFactory mustacheFactory =
     	      new DefaultMustacheFactory();
 
@@ -81,6 +89,14 @@ public class Benchmarks
     	
     	JsonStream.registerNativeEncoder(Message.class, new MessageEncoder());
     	JsonStream.registerNativeEncoder(World.class, new WorldEncoder());
+    	
+    	DEFAULT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    	DEFAULT_MAPPER.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true);
+    	DEFAULT_MAPPER.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+    	DEFAULT_MAPPER.configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH,true); 
+    	DEFAULT_MAPPER.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    	
+    	DEFAULT_MAPPER.registerModule(new AfterburnerModule()); 
 
     }
     
@@ -453,6 +469,28 @@ public class Benchmarks
 		 }
 		 
 		 exchange.getResponseSender().send( ByteBuffer.wrap(os.toByteArray())  );
+		
+	}
+	
+	@GET
+	@Path("/json4")
+	@ApiOperation(value = "Json serialization endpoint",   httpMethod = "GET" )
+	public void json4(HttpServerExchange exchange)
+	{ 
+		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
+		 
+		 byte[] bytes = null;
+		 
+		 try
+		{
+			 bytes = DEFAULT_MAPPER.writeValueAsBytes( new Message("Hello, World!"));
+			 
+		} catch (Exception e)
+		{
+			// TODO: handle exception
+		}
+		 
+		 exchange.getResponseSender().send( ByteBuffer.wrap(bytes)  );
 		
 	}
 
