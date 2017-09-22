@@ -49,7 +49,7 @@
 										<execute />
 									</action>
 								</pluginExecution>
-								<!-- <pluginExecution>
+								 <pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>com.fizzed</groupId>
 										<artifactId>rocker-maven-plugin</artifactId>
@@ -63,7 +63,7 @@
 											<runOnIncremental>true</runOnIncremental>
 										</execute>
 									</action>
-								</pluginExecution> -->
+								</pluginExecution> 
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
