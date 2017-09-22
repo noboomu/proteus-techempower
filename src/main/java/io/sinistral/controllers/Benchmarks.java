@@ -126,7 +126,11 @@ public class Benchmarks
 			}
 
 			exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
-			exchange.getResponseSender().send(JsonStream.serializeToBytes(world));
+			
+			ByteArrayOutputStream os = new  ByteArrayOutputStream(128);
+			WorldEncoder.encodeRaw(world, os); 
+			 
+			exchange.getResponseSender().send(ByteBuffer.wrap(os.toByteArray()));
 
 		} catch (Exception e)
 		{
@@ -156,7 +160,10 @@ public class Benchmarks
 			}
 
 			exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
-			exchange.getResponseSender().send(JsonStream.serializeToBytes(world));
+			ByteArrayOutputStream os = new  ByteArrayOutputStream(128);
+			WorldEncoder.encodeRaw(world, os); 
+			 
+			exchange.getResponseSender().send(ByteBuffer.wrap(os.toByteArray()));
 
 		} catch (Exception e)
 		{
@@ -289,6 +296,94 @@ public class Benchmarks
 	                Headers.CONTENT_TYPE, "text/html");
 	        exchange.getResponseSender().send(writer.toString());  
 	}
+	
+	@GET
+	@Path("/fortunes/postgres/mustache2")
+	@Produces(MediaType.TEXT_HTML)
+	@Blocking
+	@ApiOperation(value = "Fortunes postgres endpoint with mustache",   httpMethod = "GET"  )
+	public void fortunesPostgresMustache2(HttpServerExchange exchange) throws Exception
+	{ 
+		
+
+		  List<Fortune> fortunes = new ArrayList<>();
+	      
+			try (final Connection connection = postgresService.getConnection())
+			{
+				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
+				{
+	
+					try (ResultSet resultSet = statement.executeQuery())
+					{
+						while (resultSet.next())
+						{
+							int id = resultSet.getInt("id");
+							String msg = resultSet.getString("message");
+	
+							fortunes.add(new Fortune(id, msg));
+						}
+					}
+				}
+			}
+			
+	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
+	        
+	        Collections.sort(fortunes);
+	        
+ 	        StringWriter writer = new StringWriter();
+ 	      
+ 	        Mustache mustache = mustacheFactory.compile("templates/Fortunes.mustache");
+
+	        mustache.execute(writer, fortunes).flush(); 
+	        	         
+	        exchange.getResponseHeaders().put(
+	                Headers.CONTENT_TYPE, "text/html");
+	        exchange.getResponseSender().send(writer.toString());  
+	}
+	
+	private final static Mustache fortunesMustache = new DefaultMustacheFactory().compile("templates/Fortunes.mustache");
+	                                                                     
+	@GET
+	@Path("/fortunes/postgres/mustache3")
+	@Produces(MediaType.TEXT_HTML)
+	@Blocking
+	@ApiOperation(value = "Fortunes postgres endpoint with mustache",   httpMethod = "GET"  )
+	public void fortunesPostgresMustache3(HttpServerExchange exchange) throws Exception
+	{ 
+		
+
+		  List<Fortune> fortunes = new ArrayList<>();
+	      
+			try (final Connection connection = postgresService.getConnection())
+			{
+				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
+				{
+	
+					try (ResultSet resultSet = statement.executeQuery())
+					{
+						while (resultSet.next())
+						{
+							int id = resultSet.getInt("id");
+							String msg = resultSet.getString("message");
+	
+							fortunes.add(new Fortune(id, msg));
+						}
+					}
+				}
+			}
+			
+	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
+	        
+	        Collections.sort(fortunes);
+	        
+ 	        StringWriter writer = new StringWriter(); 
+
+ 	        fortunesMustache.execute(writer, fortunes).flush(); 
+	        	         
+	        exchange.getResponseHeaders().put(
+	                Headers.CONTENT_TYPE, "text/html");
+	        exchange.getResponseSender().send(writer.toString());  
+	}
  
 	
 	@GET
@@ -343,10 +438,10 @@ public class Benchmarks
 	public void json(HttpServerExchange exchange)
 	{ 
 		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
-		   
-		 ByteBuffer json = JsonStream.serializeToBytes( new Message("Hello, World!") ); 
 		 
-		 exchange.getResponseSender().send( json  );
+		 ByteArrayOutputStream os = new  ByteArrayOutputStream(128);
+		 MessageEncoder.encodeRaw(  new Message("Hello, World!"), os); 
+		 exchange.getResponseSender().send( ByteBuffer.wrap(os.toByteArray())   );
 		
 	}
 }

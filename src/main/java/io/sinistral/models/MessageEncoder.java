@@ -1,7 +1,12 @@
 package io.sinistral.models;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MessageEncoder extends com.jsoniter.spi.EmptyEncoder
 {
+	private static Logger Logger = LoggerFactory.getLogger(MessageEncoder.class.getCanonicalName());
+
 	public void encode(Object obj, com.jsoniter.output.JsonStream stream) throws java.io.IOException
 	{
 		if (obj == null)
@@ -32,23 +37,31 @@ public class MessageEncoder extends com.jsoniter.spi.EmptyEncoder
 		}
 	}
 	
-	public static void encodeRaw(io.sinistral.models.Message obj, java.io.OutputStream stream) throws java.io.IOException
+	public static void encodeRaw(io.sinistral.models.Message obj, java.io.OutputStream stream)  
 	{
-		boolean notFirst = false;
-		if (obj.message != null)
+		try
 		{
-			if (notFirst)
+			boolean notFirst = false;
+			if (obj.message != null)
 			{
-				stream.write(com.jsoniter.output.JsonStream.COMMA);
+				if (notFirst)
+				{
+					stream.write(com.jsoniter.output.JsonStream.COMMA);
+				}
+				else
+				{
+					notFirst = true;
+				}
+				stream.write(com.jsoniter.output.JsonStream.OBJECT_START);
+				stream.write("\"message\":".getBytes());
+				stream.write(com.jsoniter.output.JsonStream.QUOTE); 
+				stream.write(obj.message.getBytes());
+				stream.write(com.jsoniter.output.JsonStream.QUOTE);
+				stream.write(com.jsoniter.output.JsonStream.OBJECT_END);
 			}
-			else
-			{
-				notFirst = true;
-			}
-			stream.write(com.jsoniter.output.JsonStream.OBJECT_START);
-			stream.write("\"message\":".getBytes());
-			stream.write(obj.message.getBytes());
-			stream.write(com.jsoniter.output.JsonStream.OBJECT_END);
+		} catch (Exception e)
+		{
+			Logger.error(e.getMessage());
 		}
 	}
 }
