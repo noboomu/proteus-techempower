@@ -9,20 +9,19 @@ import com.jsoniter.output.JsonStream;
 
 import io.sinistral.controllers.Benchmarks;
 import io.sinistral.models.Message;
-import io.sinistral.models.MessageEncoder;
-import io.sinistral.models.World;
-import io.sinistral.models.WorldEncoder;
 import io.sinistral.proteus.ProteusApplication;
 import io.sinistral.proteus.services.AssetsService;
 import io.sinistral.proteus.services.SwaggerService;
 import io.sinistral.services.MySqlService;
 import io.sinistral.services.PostgresService;
+import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.SetHeaderHandler;
+import io.undertow.util.Headers;
 
 /**
  * Hello world!
@@ -91,7 +90,7 @@ public class ExampleApplication extends ProteusApplication
 		
 		  
 		
-		 HttpHandler rootHandler = new SetHeaderHandler(pathHandler, "Server", "U-tow");
+		 HttpHandler rootHandler = Handlers.header(pathHandler, Headers.SERVER_STRING, "L");
 		    Undertow.builder()
 		            .addHttpListener(8094, "0.0.0.0")
 		            // In HTTP/1.1, connections are persistent unless declared
@@ -102,19 +101,19 @@ public class ExampleApplication extends ProteusApplication
 		            .build()
 		            .start();
 		    
-		    HttpHandler rootHandler2 = new SetHeaderHandler(pathHandler, "Server", "U-tow");
+		    HttpHandler rootHandler2 = Handlers.header(pathHandler, Headers.SERVER_STRING, "G");
 		    Undertow.builder()
 		            .addHttpListener(8095, "0.0.0.0")
 		            // In HTTP/1.1, connections are persistent unless declared
 		            // otherwise.  Adding a "Connection: keep-alive" header to every
 		            // response would only add useless bytes. 
-					.setServerOption(UndertowOptions.MAX_QUEUED_READ_BUFFERS, 250) 
+					.setServerOption(UndertowOptions.MAX_QUEUED_READ_BUFFERS, 5) 
 		            .setServerOption(UndertowOptions.ALWAYS_SET_KEEP_ALIVE, false)
 		            .setHandler(rootHandler2)
 		            .build()
 		            .start();
 		    
-		    HttpHandler rootHandler3 = new SetHeaderHandler(pathHandler, "Server", "U-tow");
+		    HttpHandler rootHandler3 =  Handlers.header(pathHandler, Headers.SERVER_STRING, "F");
 		    Undertow.builder()
 		            .addHttpListener(8096, "0.0.0.0")
 		            .setBufferSize(16 * 1024)
