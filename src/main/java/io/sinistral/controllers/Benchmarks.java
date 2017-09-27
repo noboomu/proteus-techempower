@@ -155,7 +155,88 @@ public class Benchmarks
 	}
 	
 	@GET
+	@Path("/db/postgres2")
+	@Blocking
+	@ApiOperation(value = "World postgres db endpoint",   httpMethod = "GET" , response = World.class)
+	public void dbPostgres2(HttpServerExchange exchange)
+	{ 		
+		final World world;
+		
+		try (final Connection connection = postgresService.getConnection())
+		{
+			try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM world WHERE id = ?"))
+			{
+				statement.setInt(1, randomWorld());
+				try (ResultSet resultSet = statement.executeQuery())
+				{
+					resultSet.next();
+					int id = resultSet.getInt("id");
+					int randomNumber = resultSet.getInt("randomNumber");
+					world = new World(id, randomNumber);
+				}
+			}
+
+			exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
+			
+			ByteArrayOutputStream os = new  ByteArrayOutputStream(512);
+			WorldEncoder.encodeRaw(world, os); 
+			 
+			exchange.getResponseSender().send(ByteBuffer.wrap(os.toByteArray()));
+
+		} catch (Exception e)
+		{
+			throw new IllegalArgumentException();
+		}
+		  
+ 		 
+	}
+	
+	@GET
+	@Path("/db/postgres3")
+	@Blocking
+	@ApiOperation(value = "World postgres db endpoint",   httpMethod = "GET" , response = World.class)
+	public void dbPostgres3(HttpServerExchange exchange)
+	{ 		
+		final World world;
+		
+		try (final Connection connection = postgresService.getConnection())
+		{
+			try (PreparedStatement statement = connection.prepareStatement("SELECT id,randomNumber FROM world WHERE id = ?"))
+			{
+				org.postgresql.PGStatement pgstmt = (org.postgresql.PGStatement)statement;
+
+				// on the third execution start using server side statements
+				pgstmt.setPrepareThreshold(1);
+				
+				statement.setInt(1, randomWorld());
+				
+				try (ResultSet resultSet = statement.executeQuery())
+				{
+					resultSet.next();
+					int id = resultSet.getInt("id");
+					int randomNumber = resultSet.getInt("randomNumber");
+					world = new World(id, randomNumber);
+				}
+			}
+
+			exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
+			
+			ByteArrayOutputStream os = new  ByteArrayOutputStream(512);
+			WorldEncoder.encodeRaw(world, os); 
+			 
+			exchange.getResponseSender().send(ByteBuffer.wrap(os.toByteArray()));
+
+		} catch (Exception e)
+		{
+			throw new IllegalArgumentException();
+		}
+		  
+ 		 
+	}
+	
+	@GET
 	@Path("/db/mysql")
+	@Blocking
 	@ApiOperation(value = "World mysql db endpoint",   httpMethod = "GET" , response = World.class)
 	public void dbMySql(HttpServerExchange exchange)
 	{ 		
@@ -192,6 +273,7 @@ public class Benchmarks
 	@GET
 	@Path("/fortunes/mysql")
 	@Produces(MediaType.TEXT_HTML)
+	@Blocking
 	@ApiOperation(value = "Fortunes mysql endpoint",   httpMethod = "GET"  )
 	public void fortunesMysql(HttpServerExchange exchange  ) throws Exception
 	{ 
