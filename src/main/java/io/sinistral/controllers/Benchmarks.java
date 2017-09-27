@@ -159,7 +159,9 @@ public class Benchmarks
 		
 		try (final Connection connection = postgresService.getConnection())
 		{
-			try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM world WHERE id = ?",ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY))
+			try (PreparedStatement statement = connection.prepareStatement(
+			                                                               "SELECT * FROM world WHERE id = ?",
+			                                                               ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY))
 			{
 				statement.setInt(1, randomWorld());
 				try (ResultSet resultSet = statement.executeQuery())
