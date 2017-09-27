@@ -5,20 +5,12 @@ package io.sinistral.controllers;
 
 import static io.undertow.util.Headers.CONTENT_TYPE;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.fizzed.rocker.runtime.StringBuilderOutput;
-
 import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -28,11 +20,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fizzed.rocker.runtime.StringBuilderOutput;
 import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.impossibl.postgres.jdbc.PGStatementDelegator;
 import com.jsoniter.output.EncodingMode;
 import com.jsoniter.output.JsonStream;
 
@@ -185,7 +181,7 @@ public class Benchmarks
 
 		} catch (Exception e)
 		{
-			throw new IllegalArgumentException();
+			e.printStackTrace();
 		}
 		  
  		 
@@ -201,12 +197,9 @@ public class Benchmarks
 		
 		try (final Connection connection = postgresService.getConnection())
 		{
-			try (PreparedStatement statement = connection.prepareStatement("SELECT id,randomNumber FROM world WHERE id = ?"))
+			try (PreparedStatement statement = connection.prepareStatement("SELECT id, randomNumber FROM world WHERE id = ?"))
 			{
-				org.postgresql.PGStatement pgstmt = (org.postgresql.PGStatement)statement;
-
-				// on the third execution start using server side statements
-				pgstmt.setPrepareThreshold(1);
+			 
 				
 				statement.setInt(1, randomWorld());
 				
@@ -228,7 +221,7 @@ public class Benchmarks
 
 		} catch (Exception e)
 		{
-			throw new IllegalArgumentException();
+			e.printStackTrace();
 		}
 		  
  		 

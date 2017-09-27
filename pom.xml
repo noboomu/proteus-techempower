@@ -255,7 +255,7 @@
 		<dependency>
 			<groupId>io.sinistral</groupId>
 			<artifactId>proteus-core</artifactId>
-			<version>0.1.7.1-SNAPSHOT</version>
+			<version>0.1.7.2-SNAPSHOT</version>
 			
 		</dependency>
 			<dependency>
@@ -285,10 +285,15 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.41</version>
 		</dependency>
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.4.1212</version>
+		</dependency> -->
+		<dependency>
+			<groupId>com.impossibl.pgjdbc-ng</groupId>
+			<artifactId>pgjdbc-ng</artifactId>
+			<version>0.7.1</version>
 		</dependency>
 	</dependencies>
 	<properties>
