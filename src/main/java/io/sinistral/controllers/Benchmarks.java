@@ -142,12 +142,9 @@ public class Benchmarks
 				}
 			}
 
-			exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
 			
-			ByteArrayOutputStream os = new  ByteArrayOutputStream(128);
-			WorldEncoder.encodeRaw(world, os); 
-			 
-			exchange.getResponseSender().send(ByteBuffer.wrap(os.toByteArray()));
+			exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
+			exchange.getResponseSender().send(JsonStream.serializeToBytes(world));
 
 		} catch (Exception e)
 		{
@@ -223,59 +220,21 @@ public class Benchmarks
 	        
 	        fortunes.sort(null);
          
-	        final String render = views.Fortunes.template(fortunes).render().toString(); 
+	        final String render = views.Fortunes.template(fortunes).render(StringBuilderOutput.FACTORY).toString(); 
 	         
 	        exchange.getResponseHeaders().put(
 	                Headers.CONTENT_TYPE, "text/html");
-	        exchange.getResponseSender().send(render); 
+	        exchange.getResponseSender().send(render);  
 		  
 	}
-	
 
+	
 	@GET
 	@Path("/fortunes/postgres")
 	@Blocking
 	@Produces(MediaType.TEXT_HTML)
 	@ApiOperation(value = "Fortunes postgres endpoint",   httpMethod = "GET"  )
 	public void fortunesPostgres(HttpServerExchange exchange) throws Exception
-	{ 
-			List<Fortune> fortunes = new ArrayList<>();
-		  
-			try (final Connection connection = postgresService.getConnection())
-			{
-				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
-				{
-	
-					try (ResultSet resultSet = statement.executeQuery())
-					{
-						while (resultSet.next())
-						{
-							int id = resultSet.getInt("id");
-							String msg = resultSet.getString("message");
-	
-							fortunes.add(new Fortune(id, msg));
-						}
-					}
-				}
-			}
-			
-	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
-	        
-	        fortunes.sort(null);
-	        
-	        final String render = views.Fortunes.template(fortunes).render().toString(); 
-	         
-	        exchange.getResponseHeaders().put(
-	                Headers.CONTENT_TYPE, "text/html");
-	        exchange.getResponseSender().send(render);  
-	}
-	
-	@GET
-	@Path("/fortunes/postgres2")
-	@Blocking
-	@Produces(MediaType.TEXT_HTML)
-	@ApiOperation(value = "Fortunes postgres endpoint",   httpMethod = "GET"  )
-	public void fortunesPostgres2(HttpServerExchange exchange) throws Exception
 	{ 
 			List<Fortune> fortunes = new ArrayList<>();
 		  
@@ -308,139 +267,7 @@ public class Benchmarks
 	        exchange.getResponseSender().send(render);  
 	}
 	
-	@GET
-	@Path("/fortunes/postgres/mustache")
-	@Produces(MediaType.TEXT_HTML)
-	@Blocking
-	@ApiOperation(value = "Fortunes postgres endpoint with mustache",   httpMethod = "GET"  )
-	public void fortunesPostgresMustache(HttpServerExchange exchange) throws Exception
-	{ 
-		
 
-		  List<Fortune> fortunes = new ArrayList<>();
-	      
-			try (final Connection connection = postgresService.getConnection())
-			{
-				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
-				{
-	
-					try (ResultSet resultSet = statement.executeQuery())
-					{
-						while (resultSet.next())
-						{
-							int id = resultSet.getInt("id");
-							String msg = resultSet.getString("message");
-	
-							fortunes.add(new Fortune(id, msg));
-						}
-					}
-				}
-			}
-			
-	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
-	        
-	        Collections.sort(fortunes);
-	        
- 	        StringWriter writer = new StringWriter();
- 	      
- 	        Mustache mustache = mustacheFactory.compile("templates/Fortunes.mustache");
-
-	        mustache.execute(writer, fortunes); 
-	        	         
-	        exchange.getResponseHeaders().put(
-	                Headers.CONTENT_TYPE, "text/html");
-	        exchange.getResponseSender().send(writer.toString());  
-	}
-	
-	@GET
-	@Path("/fortunes/postgres/mustache2")
-	@Produces(MediaType.TEXT_HTML)
-	@Blocking
-	@ApiOperation(value = "Fortunes postgres endpoint with mustache",   httpMethod = "GET"  )
-	public void fortunesPostgresMustache2(HttpServerExchange exchange) throws Exception
-	{ 
-		
-
-		  List<Fortune> fortunes = new ArrayList<>();
-	      
-			try (final Connection connection = postgresService.getConnection())
-			{
-				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
-				{
-	
-					try (ResultSet resultSet = statement.executeQuery())
-					{
-						while (resultSet.next())
-						{
-							int id = resultSet.getInt("id");
-							String msg = resultSet.getString("message");
-	
-							fortunes.add(new Fortune(id, msg));
-						}
-					}
-				}
-			}
-			
-	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
-	        
-	        Collections.sort(fortunes);
-	        
- 	        StringWriter writer = new StringWriter();
- 	      
- 	        Mustache mustache = mustacheFactory.compile("templates/Fortunes.mustache");
-
-	        mustache.execute(writer, fortunes).flush(); 
-	        	         
-	        exchange.getResponseHeaders().put(
-	                Headers.CONTENT_TYPE, "text/html");
-	        exchange.getResponseSender().send(writer.toString());  
-	}
-	
-	private final static Mustache fortunesMustache = new DefaultMustacheFactory().compile("templates/Fortunes.mustache");
-	                                                                     
-	@GET
-	@Path("/fortunes/postgres/mustache3")
-	@Produces(MediaType.TEXT_HTML)
-	@Blocking
-	@ApiOperation(value = "Fortunes postgres endpoint with mustache",   httpMethod = "GET"  )
-	public void fortunesPostgresMustache3(HttpServerExchange exchange) throws Exception
-	{ 
-		
-
-		  List<Fortune> fortunes = new ArrayList<>();
-	      
-			try (final Connection connection = postgresService.getConnection())
-			{
-				try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM Fortune"))
-				{
-	
-					try (ResultSet resultSet = statement.executeQuery())
-					{
-						while (resultSet.next())
-						{
-							int id = resultSet.getInt("id");
-							String msg = resultSet.getString("message");
-	
-							fortunes.add(new Fortune(id, msg));
-						}
-					}
-				}
-			}
-			
-	        fortunes.add(new Fortune(0, "Additional fortune added at request time."));
-	        
-	        Collections.sort(fortunes);
-	        
- 	        StringWriter writer = new StringWriter(); 
-
- 	        fortunesMustache.execute(writer, fortunes).flush(); 
-	        	         
-	        exchange.getResponseHeaders().put(
-	                Headers.CONTENT_TYPE, "text/html");
-	        exchange.getResponseSender().send(writer.toString());  
-	}
- 
-	
 	@GET
 	@Path("/plaintext")
 	@ApiOperation(value = "Plaintext endpoint",   httpMethod = "GET" )
@@ -450,64 +277,7 @@ public class Benchmarks
 		    exchange.getResponseSender().send(MESSAGE_BUFFER.duplicate());
 	}
 	
-	@GET
-	@Path("/json3")
-	@ApiOperation(value = "Json serialization endpoint",   httpMethod = "GET" )
-	public void json3(HttpServerExchange exchange)
-	{ 
-		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
-		 
-		 ByteArrayOutputStream os = new  ByteArrayOutputStream(128);
-		 
-		 try
-		 {
-			 MessageEncoder.encodeRaw(  new Message("Hello, World!"), os);
-		 }
-		 catch(Exception e)
-		 {
-			 e.printStackTrace();
-		 }
-		 
-		 exchange.getResponseSender().send( ByteBuffer.wrap(os.toByteArray())  );
-		
-	}
-	
-	@GET
-	@Path("/json4")
-	@ApiOperation(value = "Json serialization endpoint",   httpMethod = "GET" )
-	public void json4(HttpServerExchange exchange)
-	{ 
-		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
-		 
-		 byte[] bytes = null;
-		 
-		 try
-		{
-			 bytes = DEFAULT_MAPPER.writeValueAsBytes( new Message("Hello, World!"));
-			 
-		} catch (Exception e)
-		{
-			// TODO: handle exception
-		}
-		 
-		 exchange.getResponseSender().send( ByteBuffer.wrap(bytes)  );
-		
-	}
-
-	
-
-	@GET
-	@Path("/json2")
-	@ApiOperation(value = "Json serialization endpoint",   httpMethod = "GET" )
-	public void json2(HttpServerExchange exchange)
-	{ 
-		 exchange.getResponseHeaders().put(CONTENT_TYPE, "application/json");
-		 
-		 ByteBuffer json = ByteBuffer.wrap("{\r\n\"message\": \"Hello, World!\"\r\n}".getBytes()); 
-		 
-		 exchange.getResponseSender().send( json  );
-		
-	}
+  
 	
 	@GET
 	@Path("/json")
