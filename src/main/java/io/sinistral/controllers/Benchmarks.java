@@ -150,7 +150,7 @@ public class Benchmarks
 	}
 	
 	@GET
-	@Path("/db/postgres")
+	@Path("/db/postgres2")
 	@Blocking
 	@ApiOperation(value = "World postgres db endpoint",   httpMethod = "GET" , response = World.class)
 	public void dbPostgres2(HttpServerExchange exchange)
