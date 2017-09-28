@@ -7,4 +7,4 @@ fw_depends postgresql mysql java maven
 
 mvn -U clean package
 cd target
-java -Dlogback.configurationFile="conf/logback.xml" -server  -Xms1g -Xmx2g -XX:+UseG1GC -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseStringDeduplication -classpath "./proteus-techempower-1.0.0.jar:lib/*" io.sinistral.ExampleApplication &
+java -Dlogback.configurationFile="conf/logback.xml" -server  -Xms1g -Xmx2g -classpath "./proteus-techempower-1.0.0.jar:lib/*" io.sinistral.ExampleApplication 

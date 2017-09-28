@@ -58,16 +58,13 @@ import io.undertow.util.Headers;
 @Singleton
 public class Benchmarks
 {
-	private static final String HTML_UTF8_TYPE = io.sinistral.proteus.server.MediaType.TEXT_HTML_UTF8.toString();
-	private static final String PLAINTEXT_TYPE = io.sinistral.proteus.server.MediaType.TEXT_PLAIN.toString();
+	private static final String HTML_UTF8_TYPE = io.sinistral.proteus.server.MediaType.TEXT_HTML_UTF8.toString(); 
 	private static final ByteBuffer MESSAGE_BUFFER;
     private static final String MESSAGE = "Hello, World!";
     
 	private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
  
-    
-    private static final MustacheFactory mustacheFactory =
-    	      new DefaultMustacheFactory();
+     
 
  
     static {
@@ -221,7 +218,7 @@ public class Benchmarks
 	        final String render = views.Fortunes.template(fortunes).render(StringBuilderOutput.FACTORY).toString(); 
 	         
 	        exchange.getResponseHeaders().put(
-	                Headers.CONTENT_TYPE, "text/html");
+	                Headers.CONTENT_TYPE, HTML_UTF8_TYPE);
 	        exchange.getResponseSender().send(render);  
 		  
 	}
@@ -261,7 +258,7 @@ public class Benchmarks
 	        final String render = views.Fortunes.template(fortunes).render(StringBuilderOutput.FACTORY).toString(); 
 	         
 	        exchange.getResponseHeaders().put(
-	                Headers.CONTENT_TYPE, "text/html");
+	                Headers.CONTENT_TYPE, HTML_UTF8_TYPE);
 	        exchange.getResponseSender().send(render);  
 	}
 	
