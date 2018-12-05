@@ -150,6 +150,28 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 		};
 
 		router.addExactPath("/fortunes", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPostgresHandler));
+		
+		final io.undertow.server.HttpHandler benchmarksFortunesPostgresDispatchHandler = new io.undertow.server.HttpHandler()
+		{
+			@java.lang.Override
+			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
+			{
+				exchange.dispatch(() ->
+				{
+					try
+					{
+						benchmarksController.fortunesPostgres(exchange);
+					} catch (Exception e)
+					{
+						exchange.putAttachment(io.sinistral.proteus.server.handlers.ServerDefaultResponseListener.EXCEPTION, e);
+						exchange.endExchange();
+					}
+				});
+			}
+		};
+
+		router.addExactPath("/fortunes/dispatch", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPostgresDispatchHandler));
+
 
 		final io.undertow.server.HttpHandler benchmarksPlaintextHandler = new io.undertow.server.HttpHandler()
 		{
