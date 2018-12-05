@@ -59,6 +59,28 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler> {
     };
 
     router.addExactPath("/db/mysql",new io.undertow.server.handlers.BlockingHandler(benchmarksDbMySqlHandler));
+    
+    final io.undertow.server.HttpHandler benchmarksDbPgClientHandler = new io.undertow.server.HttpHandler() {
+        @java.lang.Override
+        public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws
+            java.lang.Exception {
+
+          benchmarksController.dbPgClient(exchange);
+        }
+      };
+
+      router.addExactPath("/db/pgc",new io.undertow.server.handlers.BlockingHandler(benchmarksDbPgClientHandler));
+      
+      final io.undertow.server.HttpHandler benchmarksFortunesPgClientHandler = new io.undertow.server.HttpHandler() {
+          @java.lang.Override
+          public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws
+              java.lang.Exception {
+
+            benchmarksController.fortunesPgClient(exchange);
+          }
+        };
+
+        router.addExactPath("/fortunes/pgc",new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPgClientHandler));
 
     final io.undertow.server.HttpHandler benchmarksFortunesMysqlHandler = new io.undertow.server.HttpHandler() {
       @java.lang.Override
@@ -92,6 +114,17 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler> {
     };
 
     router.addExactPath("/plaintext",benchmarksPlaintextHandler);
+    
+    final io.undertow.server.HttpHandler benchmarksPlaintext2Handler = new io.undertow.server.HttpHandler() {
+        @java.lang.Override
+        public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws
+            java.lang.Exception {
+
+          benchmarksController.plaintext2(exchange);
+        }
+      };
+
+      router.addExactPath("/plaintext2",benchmarksPlaintext2Handler);
 
     final io.undertow.server.HttpHandler benchmarksJsonHandler = new io.undertow.server.HttpHandler() {
       @java.lang.Override

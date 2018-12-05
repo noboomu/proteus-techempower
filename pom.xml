@@ -8,23 +8,23 @@
 	<name>proteus-techempower</name>
 	<url>http://maven.apache.org</url>
 	<build>
-	 <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <testResource>
-                <directory>src/test/java</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </testResource>
-        </testResources>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -49,7 +49,7 @@
 										<execute />
 									</action>
 								</pluginExecution>
-								 <pluginExecution>
+								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>com.fizzed</groupId>
 										<artifactId>rocker-maven-plugin</artifactId>
@@ -63,7 +63,7 @@
 											<runOnIncremental>true</runOnIncremental>
 										</execute>
 									</action>
-								</pluginExecution> 
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -137,7 +137,7 @@
 					<executable>java</executable>
 					<arguments>
 						<argument>-Dlogback.configurationFile=${project.build.directory}/conf/logback.xml</argument>
-						<argument>-Dconfig.file=${project.build.directory}/conf/application.conf</argument> 
+						<argument>-Dconfig.file=${project.build.directory}/conf/application.conf</argument>
 						<argument>-Xms1g</argument>
 						<argument>-Xmx2g</argument>
 						<argument>-XX:+AggressiveOpts</argument>
@@ -153,7 +153,7 @@
 
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -183,25 +183,12 @@
 					</archive>
 				</configuration>
 			</plugin>
-			 
-		  <!-- 	<plugin>
-				<groupId>com.fizzed</groupId>
-				<artifactId>rocker-maven-plugin</artifactId>
-				<version>0.18.0</version>
-				<executions>
-					<execution>
-						<id>generate-rocker-templates</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-					<outputDirectory>${project.basedir}/src</outputDirectory>
-					</configuration>
-					</execution>
-					 
-				</executions>
-			</plugin>   -->
+
+			<!-- <plugin> <groupId>com.fizzed</groupId> <artifactId>rocker-maven-plugin</artifactId> 
+				<version>0.18.0</version> <executions> <execution> <id>generate-rocker-templates</id> 
+				<phase>generate-sources</phase> <goals> <goal>generate</goal> </goals> <configuration> 
+				<outputDirectory>${project.basedir}/src</outputDirectory> </configuration> 
+				</execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 	<dependencies>
@@ -216,9 +203,9 @@
 			<groupId>io.sinistral</groupId>
 			<artifactId>proteus-core</artifactId>
 			<version>0.1.7.4-SNAPSHOT</version>
-			
+
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>com.fizzed</groupId>
 			<artifactId>rocker-runtime</artifactId>
 			<version>0.18.0</version>
@@ -229,11 +216,11 @@
 			<version>0.18.0</version>
 			<scope>provided</scope>
 		</dependency>
-		 <dependency>
-      <groupId>com.github.spullara.mustache.java</groupId>
-      <artifactId>compiler</artifactId>
-      <version>0.9.4</version>
-    </dependency>
+		<dependency>
+			<groupId>com.github.spullara.mustache.java</groupId>
+			<artifactId>compiler</artifactId>
+			<version>0.9.4</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.zaxxer</groupId>
@@ -245,24 +232,29 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.41</version>
 		</dependency>
-	  	<dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.4.1212</version>
-		</dependency>  
+		</dependency>
+		<dependency>
+			<groupId>io.reactiverse</groupId>
+			<artifactId>reactive-pg-client</artifactId>
+			<version>0.10.8</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<rocker.version>0.18.0</rocker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
-    <repository>
-        <id>oss-sonatype</id>
-        <name>oss-sonatype</name>
-        <url>https://oss.sonatype.org/content/groups/public/</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-</repositories>
+		<repository>
+			<id>oss-sonatype</id>
+			<name>oss-sonatype</name>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>

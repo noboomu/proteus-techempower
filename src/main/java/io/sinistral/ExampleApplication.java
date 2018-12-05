@@ -1,34 +1,27 @@
 package io.sinistral;
 
-import static io.undertow.util.Headers.CONTENT_TYPE;
-
-import java.nio.ByteBuffer;
-
 import com.jsoniter.output.EncodingMode;
 import com.jsoniter.output.JsonStream;
-import com.mysql.jdbc.log.Log;
 
 import io.sinistral.controllers.Benchmarks;
-import io.sinistral.models.Message;
 import io.sinistral.proteus.ProteusApplication;
 import io.sinistral.proteus.controllers.handlers.BenchmarksRouteSupplier;
 import io.sinistral.proteus.services.AssetsService;
 import io.sinistral.proteus.services.SwaggerService;
 import io.sinistral.services.MySqlService;
+import io.sinistral.services.PgClientService;
 import io.sinistral.services.PostgresService;
-import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.SetHeaderHandler;
-import io.undertow.util.Headers;
 
 
 public class ExampleApplication extends ProteusApplication
 {
  
+	private static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ExampleApplication.class.getCanonicalName());
+
     static {
    
     	
@@ -53,7 +46,9 @@ public class ExampleApplication extends ProteusApplication
 		
 		Benchmarks controller = this.getInjector().getInstance(Benchmarks.class);
 		
-		HttpHandler rootHandler = new BenchmarksRouteSupplier(controller, null).get();
+		HttpHandler pathsHandler = new BenchmarksRouteSupplier(controller, null).get();
+		
+		HttpHandler rootHandler = new SetHeaderHandler(pathsHandler, "Server", config.getString("globalHeaders.Server"));
 		
 		Undertow.Builder undertowBuilder = Undertow.builder().addHttpListener(httpPort, config.getString("application.host"))
 				.setBufferSize(16 * 1024)
@@ -64,6 +59,8 @@ public class ExampleApplication extends ProteusApplication
 				.setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, false)
                 .setServerOption(UndertowOptions.ENABLE_CONNECTOR_STATISTICS, false)
 				.setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getBytes("undertow.server.maxEntitySize"))
+                .setSocketOption(org.xnio.Options.REUSE_ADDRESSES, true) 
+				.setServerOption(UndertowOptions.ENABLE_HTTP2, true) 
 				.setWorkerThreads(200)
 				.setHandler(rootHandler);
 		
@@ -86,6 +83,9 @@ public class ExampleApplication extends ProteusApplication
 		app.addService(MySqlService.class);
 
 		app.addService(PostgresService.class);
+		
+		app.addService(PgClientService.class);
+
 // 
 //		app.addController(Benchmarks.class);  
 		
