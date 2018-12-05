@@ -178,8 +178,8 @@ public class Benchmarks
 	{
 		log.debug("finding world");
 		
-		exchange.dispatch( () -> 
-		{
+//		exchange.dispatch( () -> 
+//		{
 
 		pgClientService.getClient().preparedQuery("SELECT id,randomNumber FROM world WHERE id = $1", Tuple.of(randomWorld()), res ->
 		{
@@ -213,7 +213,7 @@ public class Benchmarks
 				exchange.setResponseCode(500).getResponseSender().send(res.cause().getMessage());
 			}
 		});
-		});
+//		});
 	}
 
 	@GET
