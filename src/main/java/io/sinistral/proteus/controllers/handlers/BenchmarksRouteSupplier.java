@@ -37,18 +37,6 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 
 		final PathHandler router = new PathHandler();
 
-		final io.undertow.server.HttpHandler benchmarksDbPostgresHandler = new io.undertow.server.HttpHandler()
-		{
-			@java.lang.Override
-			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
-			{
-
-				benchmarksController.dbPostgres(exchange);
-			}
-		};
-
-		router.addExactPath("/db", new io.undertow.server.handlers.BlockingHandler(benchmarksDbPostgresHandler));
-
 		final io.undertow.server.HttpHandler benchmarksDbPostgresDispatchHandler = new io.undertow.server.HttpHandler()
 		{
 			@java.lang.Override
@@ -68,89 +56,33 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 			}
 		};
 
-		router.addExactPath("/db/dispatch", new io.undertow.server.handlers.BlockingHandler(benchmarksDbPostgresDispatchHandler));
+		router.addExactPath("/db", new io.undertow.server.handlers.BlockingHandler(benchmarksDbPostgresDispatchHandler));
 
 		final io.undertow.server.HttpHandler benchmarksDbMySqlHandler = new io.undertow.server.HttpHandler()
 		{
 			@java.lang.Override
 			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
 			{
-
-				benchmarksController.dbMySql(exchange);
+				 
+				benchmarksController.dbMySql(exchange); 
 			}
 		};
 
 		router.addExactPath("/db/mysql", new io.undertow.server.handlers.BlockingHandler(benchmarksDbMySqlHandler));
 
-		final io.undertow.server.HttpHandler benchmarksDbPgClientHandler = new io.undertow.server.HttpHandler()
-		{
-			@java.lang.Override
-			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
-			{
-
-				exchange.dispatch(() ->
-				{
-					try
-					{
-						benchmarksController.dbPgClient(exchange);
-					} catch (Exception e)
-					{
-						exchange.putAttachment(io.sinistral.proteus.server.handlers.ServerDefaultResponseListener.EXCEPTION, e);
-						exchange.endExchange();
-					}
-				});
-			}
-		};
-
-		router.addExactPath("/db/pgc", new io.undertow.server.handlers.BlockingHandler(benchmarksDbPgClientHandler));
-
-		final io.undertow.server.HttpHandler benchmarksFortunesPgClientHandler = new io.undertow.server.HttpHandler()
-		{
-			@java.lang.Override
-			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
-			{
-
-				exchange.dispatch(() ->
-				{
-					try
-					{
-
-						benchmarksController.fortunesPgClient(exchange);
-					} catch (Exception e)
-					{
-						exchange.putAttachment(io.sinistral.proteus.server.handlers.ServerDefaultResponseListener.EXCEPTION, e);
-						exchange.endExchange();
-					}
-				});
-			}
-		};
-
-		router.addExactPath("/fortunes/pgc", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPgClientHandler));
 
 		final io.undertow.server.HttpHandler benchmarksFortunesMysqlHandler = new io.undertow.server.HttpHandler()
 		{
 			@java.lang.Override
 			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
 			{
-
+ 
 				benchmarksController.fortunesMysql(exchange);
 			}
 		};
 
 		router.addExactPath("/fortunes/mysql", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesMysqlHandler));
 
-		final io.undertow.server.HttpHandler benchmarksFortunesPostgresHandler = new io.undertow.server.HttpHandler()
-		{
-			@java.lang.Override
-			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
-			{
-
-				benchmarksController.fortunesPostgres(exchange);
-			}
-		};
-
-		router.addExactPath("/fortunes", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPostgresHandler));
-		
 		final io.undertow.server.HttpHandler benchmarksFortunesPostgresDispatchHandler = new io.undertow.server.HttpHandler()
 		{
 			@java.lang.Override
@@ -170,7 +102,7 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 			}
 		};
 
-		router.addExactPath("/fortunes/dispatch", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPostgresDispatchHandler));
+		router.addExactPath("/fortunes", new io.undertow.server.handlers.BlockingHandler(benchmarksFortunesPostgresDispatchHandler));
 
 
 		final io.undertow.server.HttpHandler benchmarksPlaintextHandler = new io.undertow.server.HttpHandler()

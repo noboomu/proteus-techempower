@@ -9,7 +9,6 @@ import io.sinistral.proteus.controllers.handlers.BenchmarksRouteSupplier;
 import io.sinistral.proteus.services.AssetsService;
 import io.sinistral.proteus.services.SwaggerService;
 import io.sinistral.services.MySqlService;
-import io.sinistral.services.PgClientService;
 import io.sinistral.services.PostgresService;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -59,8 +58,8 @@ public class ExampleApplication extends ProteusApplication
 				.setServerOption(UndertowOptions.RECORD_REQUEST_START_TIME, false)
                 .setServerOption(UndertowOptions.ENABLE_CONNECTOR_STATISTICS, false)
 				.setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getBytes("undertow.server.maxEntitySize"))
-                .setSocketOption(org.xnio.Options.REUSE_ADDRESSES, true) 
-				.setServerOption(UndertowOptions.ENABLE_HTTP2, true) 
+                //.setSocketOption(org.xnio.Options.REUSE_ADDRESSES, true) 
+				//.setServerOption(UndertowOptions.ENABLE_HTTP2, true) 
 				.setWorkerThreads(200)
 				.setHandler(rootHandler);
 		
@@ -82,9 +81,7 @@ public class ExampleApplication extends ProteusApplication
 
 		app.addService(MySqlService.class);
 
-		app.addService(PostgresService.class);
-		
-		app.addService(PgClientService.class);
+		app.addService(PostgresService.class); 
 
 // 
 //		app.addController(Benchmarks.class);  

@@ -6,12 +6,7 @@ package io.sinistral.controllers;
 import static io.undertow.util.Headers.CONTENT_TYPE;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,15 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fizzed.rocker.runtime.StringBuilderOutput;
 import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.jsoniter.output.EncodingMode;
 import com.jsoniter.output.JsonStream;
 
-import io.reactiverse.pgclient.PgIterator;
-import io.reactiverse.pgclient.Tuple;
 import io.sinistral.models.Fortune;
 import io.sinistral.models.Message;
 import io.sinistral.models.MessageEncoder;
@@ -46,7 +38,6 @@ import io.sinistral.models.World;
 import io.sinistral.models.WorldEncoder;
 import io.sinistral.proteus.annotations.Blocking;
 import io.sinistral.services.MySqlService;
-import io.sinistral.services.PgClientService;
 import io.sinistral.services.PostgresService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -85,7 +76,7 @@ public class Benchmarks
 		
 		try
 		{
-			length = MESSAGE.getBytes("US-ASCII").length;
+			length = MESSAGE.getBytes().length;
 		} catch (Exception e)
 		{
 			throw new RuntimeException(e);
@@ -97,7 +88,7 @@ public class Benchmarks
 		
 		try
 		{
-			MESSAGE_BUFFER.put(MESSAGE.getBytes("US-ASCII"));
+			MESSAGE_BUFFER.put(MESSAGE.getBytes());
 		} catch (Exception e)
 		{
 			throw new RuntimeException(e);
@@ -121,9 +112,7 @@ public class Benchmarks
 	}
 
 	protected final MySqlService sqlService;
-
-	protected final PgClientService pgClientService;
-
+ 
 	protected final PostgresService postgresService;
 
 	public static int randomWorld()
@@ -132,11 +121,10 @@ public class Benchmarks
 	}
 
 	@Inject
-	public Benchmarks(PostgresService postgresService, MySqlService sqlService, PgClientService pgClientService)
+	public Benchmarks(PostgresService postgresService, MySqlService sqlService)
 	{
 		this.sqlService = sqlService;
-		this.postgresService = postgresService;
-		this.pgClientService = pgClientService;
+		this.postgresService = postgresService; 
 	}
 
 	@GET
@@ -169,49 +157,7 @@ public class Benchmarks
 			throw new IllegalArgumentException();
 		}
 	}
-
-	@GET
-	@Path("/db/pgc")
-	@Blocking
-	@ApiOperation(value = "World pgClient db endpoint", httpMethod = "GET", response = World.class)
-	public void dbPgClient(HttpServerExchange exchange)
-	{
- 		
-//		exchange.dispatch( () -> 
-//		{
-
-		pgClientService.getClient().preparedQuery("SELECT id,randomNumber FROM world WHERE id = $1", Tuple.of(randomWorld()), res ->
-		{
  
-			if (res.succeeded())
-			{
-				PgIterator resultSet = res.result().iterator();
-				if (!resultSet.hasNext())
-				{
-
-					exchange.setResponseCode(404).endExchange();
-
-					return;
-				}
-
-				Tuple row = resultSet.next();
-
-				int id = row.getInteger(0);
-				int randomNumber = row.getInteger(1);
-				World world = new World(id, randomNumber);
-				
- 
-				exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
-				exchange.getResponseSender().send(JsonStream.serializeToBytes(world));
-
-			}
-			else
-			{
-				exchange.setResponseCode(500).getResponseSender().send(res.cause().getMessage());
-			}
-		});
-//		});
-	}
 
 	@GET
 	@Path("/db/mysql")
@@ -326,57 +272,6 @@ public class Benchmarks
 		exchange.getResponseSender().send(render);
 	}
 	
-	@GET
-	@Path("/fortunes/pgc")
-	@Blocking
-	@Produces(MediaType.TEXT_HTML)
-	@ApiOperation(value = "Fortunes pgClient endpoint", httpMethod = "GET")
-	public void fortunesPgClient(HttpServerExchange exchange) throws Exception
-	{
- 
-		pgClientService.getClient().preparedQuery("SELECT id, message FROM Fortune", res ->
-		{
-
-			if (res.succeeded())
-			{
-				List<Fortune> fortunes = new ArrayList<>();
-
-				PgIterator resultSet = res.result().iterator();
-				
-				if (!resultSet.hasNext())
-				{
-					exchange.setResponseCode(404).getResponseSender().send("NOT FOUND");
-
-					return;
-				}
-
-				while( resultSet.hasNext() )
-				{
-					Tuple row = resultSet.next();
-					
-					int id = row.getInteger(0);
-					String message = row.getString(1);
-					
-					fortunes.add(new Fortune(id,message));
-				}
-				
-				fortunes.add(new Fortune(0, "Additional fortune added at request time."));
-
-				fortunes.sort(null);
- 
-				final String render = views.Fortunes.template(fortunes).render(StringBuilderOutput.FACTORY).toString();
-
-				exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, HTML_UTF8_TYPE);
-				exchange.getResponseSender().send(render);
-
-			}
-			else
-			{
-				exchange.setResponseCode(500).getResponseSender().send(res.cause().getMessage());
-			}
-		}); 
-	}
-
 	@GET
 	@Path("/plaintext")
 	@ApiOperation(value = "Plaintext endpoint", httpMethod = "GET")
