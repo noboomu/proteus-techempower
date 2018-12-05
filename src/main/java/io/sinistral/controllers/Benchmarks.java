@@ -177,9 +177,7 @@ public class Benchmarks
 	public void dbPgClient(HttpServerExchange exchange)
 	{ 
 		
-		exchange.dispatch( () -> 
-		{
-
+		 
 		pgClientService.getClient().preparedQuery("SELECT id,randomNumber FROM world WHERE id = $1", Tuple.of(randomWorld()), res ->
 		{ 
 
@@ -209,8 +207,7 @@ public class Benchmarks
 			{
 				exchange.setResponseCode(500).getResponseSender().send(res.cause().getMessage());
 			}
-		});
-		});
+		}); 
 	}
 
 	@GET
@@ -331,7 +328,7 @@ public class Benchmarks
 	@Blocking
 	@Produces(MediaType.TEXT_HTML)
 	@ApiOperation(value = "Fortunes pgClient endpoint", httpMethod = "GET")
-	public void fortunesPgClient(HttpServerExchange exchange) throws Exception
+	public void fortunesPgClient(HttpServerExchange exchange)  
 	{
  
 		pgClientService.getClient().preparedQuery("SELECT id, message FROM Fortune", res ->

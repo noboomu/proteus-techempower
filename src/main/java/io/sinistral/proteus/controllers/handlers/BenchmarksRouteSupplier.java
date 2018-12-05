@@ -5,6 +5,7 @@ import static io.sinistral.proteus.server.Extractors.*;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.sinistral.controllers.Benchmarks;
+import io.undertow.server.DefaultResponseListener;
 import io.undertow.server.HandlerWrapper;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
@@ -76,7 +77,17 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler> {
           public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws
               java.lang.Exception {
 
-            benchmarksController.fortunesPgClient(exchange);
+        	exchange.dispatch( () -> 
+      		{ 
+      			try
+				{
+          			benchmarksController.fortunesPgClient(exchange); 
+				} catch (Exception e)
+				{
+					exchange.putAttachment(io.sinistral.proteus.server.handlers.ServerDefaultResponseListener.EXCEPTION, e);
+					exchange.endExchange();
+				}
+       		});
           }
         };
 
