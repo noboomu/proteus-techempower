@@ -176,15 +176,13 @@ public class Benchmarks
 	@ApiOperation(value = "World pgClient db endpoint", httpMethod = "GET", response = World.class)
 	public void dbPgClient(HttpServerExchange exchange)
 	{
-		log.debug("finding world");
-		
+ 		
 //		exchange.dispatch( () -> 
 //		{
 
 		pgClientService.getClient().preparedQuery("SELECT id,randomNumber FROM world WHERE id = $1", Tuple.of(randomWorld()), res ->
 		{
-			log.debug("got response: " + res);
-
+ 
 			if (res.succeeded())
 			{
 				PgIterator resultSet = res.result().iterator();
@@ -202,8 +200,7 @@ public class Benchmarks
 				int randomNumber = row.getInteger(1);
 				World world = new World(id, randomNumber);
 				
-				log.debug("found world");
-
+ 
 				exchange.getResponseHeaders().put(io.undertow.util.Headers.CONTENT_TYPE, "application/json");
 				exchange.getResponseSender().send(JsonStream.serializeToBytes(world));
 
