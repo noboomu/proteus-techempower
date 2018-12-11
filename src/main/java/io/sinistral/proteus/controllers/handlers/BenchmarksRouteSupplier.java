@@ -63,8 +63,18 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 			@java.lang.Override
 			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
 			{
-				 
-				benchmarksController.dbMySql(exchange); 
+				  
+				exchange.dispatch(() ->
+				{
+					try
+					{
+						benchmarksController.dbMySql(exchange);
+					} catch (Exception e)
+					{
+						exchange.putAttachment(io.sinistral.proteus.server.handlers.ServerDefaultResponseListener.EXCEPTION, e);
+						exchange.endExchange();
+					}
+				});
 			}
 		};
 
@@ -75,9 +85,18 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 		{
 			@java.lang.Override
 			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
-			{
- 
-				benchmarksController.fortunesMysql(exchange);
+			{ 
+				exchange.dispatch(() ->
+				{
+					try
+					{
+						benchmarksController.fortunesMysql(exchange);
+					} catch (Exception e)
+					{
+						exchange.putAttachment(io.sinistral.proteus.server.handlers.ServerDefaultResponseListener.EXCEPTION, e);
+						exchange.endExchange();
+					}
+				});
 			}
 		};
 
@@ -116,18 +135,51 @@ public class BenchmarksRouteSupplier implements Supplier<HttpHandler>
 		};
 
 		router.addExactPath("/plaintext", benchmarksPlaintextHandler);
-
-		final io.undertow.server.HttpHandler benchmarksPlaintext2Handler = new io.undertow.server.HttpHandler()
+		
+		final io.undertow.server.HttpHandler benchmarksPlaintextIOHandler = new io.undertow.server.HttpHandler()
 		{
 			@java.lang.Override
 			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
 			{
+	            exchange.dispatch(exchange.getIoThread(), () -> {
 
-				benchmarksController.plaintext2(exchange);
+	            	benchmarksController.plaintext(exchange);
+				
+	            });
 			}
 		};
 
-		router.addExactPath("/plaintext2", benchmarksPlaintext2Handler);
+		router.addExactPath("/plaintext/io", benchmarksPlaintextIOHandler);
+		
+		final io.undertow.server.HttpHandler benchmarksPlaintextDispatchHandler = new io.undertow.server.HttpHandler()
+		{
+			@java.lang.Override
+			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
+			{
+	            exchange.dispatch(() -> {
+
+	            	benchmarksController.plaintext(exchange);
+				
+	            });
+			}
+		};
+
+		router.addExactPath("/plaintext/dispatch", benchmarksPlaintextDispatchHandler);
+		
+		final io.undertow.server.HttpHandler benchmarksPlaintextSameThreadHandler = new io.undertow.server.HttpHandler()
+		{
+			@java.lang.Override
+			public void handleRequest(final io.undertow.server.HttpServerExchange exchange) throws java.lang.Exception
+			{
+	            exchange.dispatch( io.undertow.util.SameThreadExecutor.INSTANCE, () -> {
+
+	            	benchmarksController.plaintext(exchange);
+				
+	            });
+			}
+		};
+
+		router.addExactPath("/plaintext/same", benchmarksPlaintextSameThreadHandler);
 
 		final io.undertow.server.HttpHandler benchmarksJsonHandler = new io.undertow.server.HttpHandler()
 		{

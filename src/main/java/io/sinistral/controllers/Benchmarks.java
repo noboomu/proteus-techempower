@@ -24,8 +24,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fizzed.rocker.runtime.StringBuilderOutput;
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.MustacheFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.jsoniter.output.EncodingMode;
@@ -56,35 +54,21 @@ import io.undertow.util.Headers;
 @Singleton
 public class Benchmarks
 {
-	private static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Benchmarks.class.getCanonicalName());
 
 	private static final String HTML_UTF8_TYPE = io.sinistral.proteus.server.MediaType.TEXT_HTML_UTF8.toString();
 	private static final ByteBuffer MESSAGE_BUFFER;
-	private static final ByteBuffer MESSAGE_BUFFER_2;
 
 	private static final String MESSAGE = "Hello, World!";
-	private static final String FORTUNES_TEMPLATE = Benchmarks.class.getResource("/templates/Fortunes.mustache").getFile();
 
 	private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
-
-	private final MustacheFactory mustacheFactory = new DefaultMustacheFactory();
 
 	static
 	{
 
 		int length = 0;
-		
-		try
-		{
-			length = MESSAGE.getBytes().length;
-		} catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
+	
 		
 		MESSAGE_BUFFER = ByteBuffer.allocateDirect(length);
-
-		MESSAGE_BUFFER_2 = ByteBuffer.wrap(MESSAGE.getBytes());
 		
 		try
 		{
@@ -281,15 +265,6 @@ public class Benchmarks
 		exchange.getResponseSender().send(MESSAGE_BUFFER.duplicate());
 	}
 
-	@GET
-	@Path("/plaintext2")
-	@ApiOperation(value = "Plaintext endpoint 2", httpMethod = "GET")
-	public void plaintext2(HttpServerExchange exchange)
-	{
-		exchange.getResponseHeaders().put(CONTENT_TYPE, "text/plain");
-		exchange.getResponseSender().send(MESSAGE_BUFFER_2);
-	}
-	
 	@GET
 	@Path("/json")
 	@ApiOperation(value = "Json serialization endpoint", httpMethod = "GET")
